@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <ostream>
+#include <vector>
 
 enum Suit
 {
@@ -41,6 +42,14 @@ struct Card
     {
         return suit == other.suit && rank == other.rank;
     }
+
+    bool operator!=(const Card& other) const
+    {
+        return !(*this == other);
+    }
 };
+
+
+using Play = std::vector<Card>;
 
 std::ostream& operator<<(std::ostream &os, const Card &card);

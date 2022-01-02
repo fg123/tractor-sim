@@ -17,10 +17,10 @@ std::ostream& operator<<(std::ostream &os, const Card &card)
         os << "S";
         break;
     case SmallJoker:
-        os << "J";
+        os << "J  ";
         return os;
     case BigJoker:
-        os << "JJ";
+        os << "JJ ";
         return os;
     }
     switch (card.rank)
@@ -28,7 +28,15 @@ std::ostream& operator<<(std::ostream &os, const Card &card)
     case None:
         break;
     default:
-        os << static_cast<int>(card.rank);
+        int rank = static_cast<int>(card.rank);
+        if (rank < 10)
+        {
+            os << rank << " ";
+        }
+        else
+        {
+            os << rank;
+        }
         break;
     }
     return os;

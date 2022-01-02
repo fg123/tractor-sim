@@ -3,6 +3,7 @@
 #include "sim/Player.h"
 
 #include "TractorState.h"
+#include "TractorEvaluator.h"
 
 struct TractorPlayer : public Player 
 {

@@ -14,11 +14,11 @@ struct State
     
     // Players must be ordered in the play-order
     std::vector<Player*> players;
-    
+
     std::vector<StateChange*> stateChanges;
 
     // Current Trick (playerIndex -> CardsPlayed)
-    std::unordered_map<int, std::vector<Card>> currentTrick;
+    std::unordered_map<PlayerID, Play> currentTrick;
     PlayerID currentTrickLeader = 0;
 
     ~State()
