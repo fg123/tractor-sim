@@ -1,5 +1,6 @@
 #include "TractorEvaluator.h"
 #include "TractorPlayer.h"
+#include "TractorHand.h"
 
 namespace TractorEvaluator
 {
@@ -57,19 +58,37 @@ namespace TractorEvaluator
 
     bool IsLegalLead(const Play& play, const TractorState* state)
     {
-        // // TODO: implement throw and tractor
-        // return IsAllSameCard(play);
+        // TODO: implement throw and tractor
         return IsAllSameSuit(play, state);
     }
 
-    bool IsLegalFollow(const Play& play, const TractorState* state)
+    bool IsLegalFollow(const TractorHand& hand, const Play& play, const TractorState* state)
     {
         const Play& lead = state->currentTrick.at(state->currentTrickLeader);
         if (lead.size() != play.size())
         {
             return false;
         }
-        // Validate pairs and stuff
+
+        TractorHand playHand { play, state };
+
+        PlaySuit leadSuit = CardToPlaySuit(lead[0], state);
+        
+        // If you're out, anything is legal
+        if (hand.GetSuitCount(leadSuit) == 0)
+        {
+            return true;
+        }
+        
+        if (hand.GetSuitCount(leadSuit) <= lead.size())
+        {
+            // No choice anyway, make sure it's all in there
+            return playHand.GetSuitCount(leadSuit) == lead.size();
+        }
+        
+        // We have more in the suit than possible, ensure structure matches
+        
+        
         return true;
     }
 };

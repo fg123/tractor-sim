@@ -6,10 +6,11 @@
 #include <unordered_map>
 #include <algorithm>
 
-class Hand 
+class TractorHand 
 {
     std::unordered_map<TractorEvaluator::PlaySuit, std::vector<Card>> handMap;
 
 public:
-    Hand(std::vector<Card> cards, TractorState* state);
+    TractorHand(std::vector<Card> cards, const TractorState* state);
+    size_t GetSuitCount(TractorEvaluator::PlaySuit suit) const;
 };

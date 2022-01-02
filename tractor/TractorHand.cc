@@ -2,7 +2,7 @@
 
 using namespace TractorEvaluator;
 
-Hand::Hand(std::vector<Card> cards, TractorState* state)
+TractorHand::TractorHand(std::vector<Card> cards, const TractorState* state)
 {
     for (auto card : cards)
     {
@@ -14,4 +14,11 @@ Hand::Hand(std::vector<Card> cards, TractorState* state)
             return GetCardValueWithinSuit(suit.first, a, state) < GetCardValueWithinSuit(suit.first, b, state);
         });
     }
+}
+
+
+size_t TractorHand::GetSuitCount(TractorEvaluator::PlaySuit suit) const
+{
+    if (handMap.find(suit) == handMap.end()) return 0;
+    return handMap.at(suit).size();
 }

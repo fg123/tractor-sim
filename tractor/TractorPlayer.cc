@@ -7,15 +7,16 @@ using namespace TractorEvaluator;
 
 void TractorPlayer::QueryPlay()
 {
-    Hand _hand(hand, state);
+    TractorHand tractorHand(hand, state);
     if (state->currentTrick.empty())
     {
         // A lead must only be of the same "suit"
-        
+        // IsLegalLead(hand, play, state);
     }
     else 
     {
         // Follower
+        // IsLegalFollow(hand, play, state);
     }
 }
 
