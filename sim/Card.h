@@ -49,6 +49,18 @@ struct Card
     }
 };
 
+namespace std
+{
+    template<>
+    struct hash<Card>
+    {
+        size_t operator()(const Card& card) const
+        {
+            return hash<int>()(static_cast<int>(card.suit)) ^ hash<int>()(static_cast<int>(card.rank));
+        }
+    };
+};
+
 
 using Play = std::vector<Card>;
 

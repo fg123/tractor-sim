@@ -2,6 +2,8 @@
 #include "TractorPlayer.h"
 #include "TractorHand.h"
 
+#include <sstream>
+
 namespace TractorEvaluator
 {
     PlaySuit CardToPlaySuit(const Card& card, const TractorState* state)
@@ -87,8 +89,89 @@ namespace TractorEvaluator
         }
         
         // We have more in the suit than possible, ensure structure matches
-        
+
         
         return true;
+    }
+
+    std::string PlayStructure::ToString() const
+    {
+        std::ostringstream ss;
+        for (auto& kv : nonTractors)
+        {   
+            // Don't write Zeros for Hashing
+            if (kv.second == 0) continue;
+            ss << kv.first << ":" << kv.second << ",";
+        }
+        return ss.str();
+    }
+
+    bool PlayStructure::operator==(const PlayStructure& other) const
+    {
+        return ToString() == other.ToString();
+    }
+
+    bool PlayStructure::operator<(const PlayStructure& other) const
+    {
+        auto ownBegin = nonTractors.begin();
+        auto otherBegin = other.nonTractors.begin();
+        auto ownEnd = nonTractors.end();
+        auto otherEnd = other.nonTractors.end();
+
+        for (; ownBegin != ownEnd && otherBegin != otherEnd; ++ownBegin, ++otherBegin)
+        {
+            if (ownBegin->first < otherBegin->first)
+            {
+                return true;
+            }
+            else if (ownBegin->first > otherBegin->first)
+            {
+                return false;
+            }
+            else
+            {
+                if (ownBegin->second < otherBegin->second)
+                {
+                    return true;
+                }
+                else if (ownBegin->second > otherBegin->second)
+                {
+                    return false;
+                }
+            }
+        }
+        return ownBegin == ownEnd && otherBegin != otherEnd;
+    }
+
+    void PlayStructureIntoWaterfall(PlayStructure& structure, PlayStructureWaterfall& waterfall)
+    {
+        waterfall.insert(structure);
+        for (auto& kv : structure.nonTractors) {
+            if (kv.second == 0) continue;
+            if (kv.first <= 1) continue;
+            PlayStructure newStructure = structure;
+            // Subtract 1 from the top one
+            newStructure.nonTractors[kv.first] -= 1;
+            newStructure.nonTractors[1] += 1;    
+            PlayStructureIntoWaterfall(newStructure, waterfall);
+            return;
+        }
+
+    }
+
+    PlayStructureWaterfall WaterfallFromPlay(const Play& play)
+    {
+        PlayStructureWaterfall result;
+        // Create initial max, greedy structure
+        std::unordered_map<Card, size_t> cardCount;
+        for (auto& card : play) {
+            cardCount[card] += 1;
+        }
+        PlayStructure initialStructure;
+        for (auto& kv : cardCount) {
+            initialStructure.nonTractors[kv.second]++;
+        }
+        PlayStructureIntoWaterfall(initialStructure, result);
+        return result;
     }
 };

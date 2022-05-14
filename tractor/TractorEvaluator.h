@@ -5,9 +5,16 @@
 #include "sim/Card.h"
 
 #include <vector>
+#include <map>
+#include <set>
 
 namespace TractorEvaluator 
 {
+    using PlayStructureWaterfall = std::set<PlayStructure, std::greater<PlayStructure>>;
+    // Assumes that Play is all one PlaySuit, since waterfalls are only
+    //   created for Leads.
+    PlayStructureWaterfall WaterfallFromPlay(const Play& play);
+    
     struct PlayStructure 
     {
         // TODO:
@@ -17,6 +24,16 @@ namespace TractorEvaluator
         // 3. length 2 - triple
         // 4. length 1 - triple, length 1 double, 1 single
         // 5. etc.etc
+        using Arity = size_t;
+        // How many of each arity, sorted by arity for key-ing
+        std::map<Arity, size_t, std::greater<Arity>> nonTractors;
+
+        // TODO: Aggregate and implement tractors
+
+        std::string ToString() const;
+
+        bool operator<(const PlayStructure& other) const;
+        bool operator==(const PlayStructure& other) const;
     };
 
     enum class PlaySuit
@@ -32,4 +49,17 @@ namespace TractorEvaluator
     size_t GetCardValueWithinSuit(PlaySuit suit, const Card& card, const TractorState* state);
     bool IsLegalLead(const Play& play, const TractorState* state);
     bool IsLegalFollow(const Play& play, const TractorState* state);
+};
+
+// Hash fpr PlayStructure
+namespace std {
+
+    template <>
+    struct hash<TractorEvaluator::PlayStructure>
+    {
+        std::size_t operator()(const TractorEvaluator::PlayStructure& k) const
+        {
+            return hash<string>()(k.ToString());
+        }
+    };
 };
